@@ -73,13 +73,26 @@ let vowelScore = {
     "description" : "Vowels are 3 pts, consonants are 1 pt.",
     "scorerFunction": vowelBonusScorer
 }
-
+// scoring function for newPointStructure
+let scrabbleScorer = function (word){
+   let score = 0;
+   let newWord = word.toLowerCase()
+   for (let i = 0; i < newWord.length; i++){
+       for (key in newPointStructure){
+         if (word[i] === key){
+            score += newPointStructure[key];
+         }
+      }
+   }
+   return score
+};
+// final object for array
 let scrabbleoldScore = {
-    "name": "Scrabble",
-    "description" : "The traditional scoring algorithm.",
-    "scorerFunction": oldScrabbleScorer
+   "name": "Scrabble",
+   "description" : "The traditional scoring algorithm.",
+   "scorerFunction": scrabbleScorer
 }
-let scrabbleScorer;
+
 // array for scorer prompt
 const scoringAlgorithms = [simpScore, vowelScore, scrabbleoldScore];
 // prompt for scoring method and replay if incorrect number is written
@@ -98,10 +111,37 @@ function scorerPrompt(arr) {
 };
 
 function transform(object) {
-for (let key in oldPointStructure){
-   
+   let newObject = {};
+let letters = [];
+let lowerCase = "";
+
+for (key in object){
+letters.push(object[key])
 }
 
+lowerCase = letters.join(",").toLocaleLowerCase().split(",").sort();   
+for(let i = 0; i < lowerCase.length; i++) {
+ newObject[`${lowerCase[i]}`] = key; 
+}
+for (key in newObject){
+    if (key === "a" || key === "e" || key === "i" || key === "o" || key === "u" || key === "l" || key === "n" || key === "r" || key === "s" || key === "t"){
+        newObject[key] = 1;
+    } else if (  key === "d" || key === "g"){
+        newObject[key] = 2;
+    } else if ( key === "b" || key === "c" || key === "m" || key === "p"){
+        newObject[key] = 3; 
+    } else if ( key === "f" || key === "h" || key === "v" || key === "w" || key === "y"){
+        newObject[key] = 4;
+    } else if ( key === "k"){
+        newObject[key] = 5;
+    } else if ( key === "j" || key === "x"){
+        newObject[key] = 8;
+    }else if ( key === "q" || key === "z"){
+        newObject[key] = 10;
+    }
+
+};
+return newObject;
 };
 
 let newPointStructure = transform(oldPointStructure);
